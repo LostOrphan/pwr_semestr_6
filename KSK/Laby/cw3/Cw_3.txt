@@ -1,0 +1,483 @@
+=========================S1# show run
+S1#show run
+Building configuration...
+
+*Mar 20 10:36:07.502: %SYS-5-CONFIG_I: Configured from console by console
+Current configuration : 3639 bytes
+!
+! Last configuration change at 10:36:07 UTC Fri Mar 20 2026
+!
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname S1
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 9 $9$p2kI9CqAGGr0Va$sVwAXTb1G8pHBO/3saIBSDrCD9lgw3oatHJQHjrCBEk
+!
+no aaa new-model
+switch 1 provision c1000-24t-4g-l
+system mtu routing 1500
+!
+!
+no ip domain-lookup
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ switchport trunk allowed vlan 10,20,23,1000
+ switchport trunk native vlan 1000
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/3
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/4
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/5
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/6
+ switchport access vlan 20
+ switchport mode access
+!
+interface GigabitEthernet1/0/7
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/8
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/9
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/10
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/11
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/12
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/13
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/14
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/15
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/16
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/17
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/18
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/19
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/20
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/21
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/22
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/23
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/24
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet1/0/25
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/26
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/27
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/28
+ switchport access vlan 999
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ ip address 192.168.10.11 255.255.255.0
+!
+interface Vlan20
+ ip address 192.168.20.11 255.255.255.0
+!
+interface Vlan30
+ ip address 192.168.30.11 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+!
+!
+banner motd ^CGoscinski Duda Piatek 9:15^C
+!
+line con 0
+ password 7 02050D480809
+ login
+line vty 0 4
+ password 7 02050D480809
+ login
+ transport input none
+line vty 5 15
+ login
+ transport input none
+!
+end
+
+=========================S1# show vlan brief
+S1#show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active
+10   Management                       active
+20   Sales                            active    Gi1/0/6
+30   Operations                       active
+999  ParkingLot                       active    Gi1/0/2, Gi1/0/3, Gi1/0/4
+                                                Gi1/0/5, Gi1/0/7, Gi1/0/8
+                                                Gi1/0/9, Gi1/0/10, Gi1/0/11
+                                                Gi1/0/12, Gi1/0/13, Gi1/0/14
+                                                Gi1/0/15, Gi1/0/16, Gi1/0/17
+                                                Gi1/0/18, Gi1/0/19, Gi1/0/20
+                                                Gi1/0/21, Gi1/0/22, Gi1/0/23
+                                                Gi1/0/24, Gi1/0/25, Gi1/0/26
+                                                Gi1/0/27, Gi1/0/28
+1000 Native                           active
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+=========================S1# show interfaces trunk
+S1#show interfaces trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Gi1/0/1     on               802.1q         trunking      1000
+
+Port        Vlans allowed on trunk
+Gi1/0/1     10,20,23,1000
+
+Port        Vlans allowed and active in management domain
+Gi1/0/1     10,20,1000
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gi1/0/1     10,20,1000
+
+
+
+
+=========================S2# show run
+S2#show run
+Building configuration...
+
+Current configuration : 3061 bytes
+!
+! Last configuration change at 10:41:54 UTC Fri Mar 20 2026
+!
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname S2
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 9 $9$fqcvTamJaKv8rK$sEnF0Gw2ERWpFrOd.4AM5QGaS4b.DKPcc9J.br6/ot.
+!
+no aaa new-model
+switch 1 provision c1000-24t-4g-l
+system mtu routing 1500
+!
+!
+no ip domain-lookup
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ switchport trunk allowed vlan 10,20,30,1000
+ switchport trunk native vlan 1000
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/2
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/3
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/4
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/5
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/6
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/7
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/8
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/9
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/10
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/11
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/12
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/13
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/14
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/15
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/16
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/17
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/18
+ switchport access vlan 30
+ switchport mode access
+!
+interface GigabitEthernet1/0/19
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/20
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/21
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/22
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/23
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/24
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/25
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/26
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/27
+ switchport access vlan 999
+ shutdown
+!
+interface GigabitEthernet1/0/28
+ switchport access vlan 999
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ ip address 192.168.10.12 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+!
+!
+banner login ^C
+Sklad grupy:
+Daniel Goscinski
+Lukasz DUda
+Termin zajec:
+20.03.2026
+^C
+!
+line con 0
+ password 7 02050D480809
+ login
+line vty 0 4
+ password 7 02050D480809
+ login
+ transport input none
+line vty 5 15
+ password 7 02050D480809
+ login
+ transport input none
+!
+end
+=========================S2# show vlan brief
+S2(config)#do show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active
+10   Management                       active
+20   Sales                            active
+30   Operations                       active    Gi1/0/18
+999  ParkingLot                       active    Gi1/0/2, Gi1/0/3, Gi1/0/4
+                                                Gi1/0/5, Gi1/0/6, Gi1/0/7
+                                                Gi1/0/8, Gi1/0/9, Gi1/0/10
+                                                Gi1/0/11, Gi1/0/12, Gi1/0/13
+                                                Gi1/0/14, Gi1/0/15, Gi1/0/16
+                                                Gi1/0/17, Gi1/0/19, Gi1/0/20
+                                                Gi1/0/21, Gi1/0/22, Gi1/0/23
+                                                Gi1/0/24, Gi1/0/25, Gi1/0/26
+                                                Gi1/0/27, Gi1/0/28
+1000 Native                           active
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+=========================S2# show interfaces trunk
+S2(config)#do show interfaces trunk
+
+Port        Mode             Encapsulation  Status        Native vlan
+Gi1/0/1     on               802.1q         trunking      1000
+
+Port        Vlans allowed on trunk
+Gi1/0/1     10,20,30,1000
+
+Port        Vlans allowed and active in management domain
+Gi1/0/1     10,20,30,1000
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gi1/0/1     10,20,30,1000

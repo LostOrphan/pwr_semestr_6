@@ -80,12 +80,11 @@ Drugim znaczącym graczem na polskim rynku jest *OLX*, który w porównaniu do A
 
 Ostatnim podmiotem analizy jest *Vinted*. Jest to przykład platformy skupiającej się na bardzo specyficznej kategorii produktów - odzieży oraz akcesoriów używanych. Prosty interfejs użytkownika oraz spełnienie bardzo konkretnej potrzeby użytkowników pozwolił platformie na uzyskanie dużej ilości użytkowników.
 
-Analizując powyższe przykłady oraz inne niewspomniane wcześniej można zauważyć zróżnicowanie rozwiązań, które niezależnie od swojej niszy oraz metod działania nadal uzyskują swoją renomę. Można jednak wyznaczyć cechy wspólne wszystkich stron: jasno określony rynek produktów, możliwość wystawiania ogłoszeń, system komunikacji między użytkownikiem a sprzedającym, duża ilość możliwości transportu produktu. Rozwiązania te będą punktem odniesienia do utworzenia własnej aplikacji webowej.
+Analizując powyższe przykłady oraz inne niewspomniane wcześniej można zauważyć zróżnicowanie rozwiązań, które niezależnie od swojej niszy oraz metod działania nadal uzyskują swoją renomę. Można jednak wyznaczyć cechy wspólne wszystkich stron: jasno określony rynek produktów, możliwość wystawiania ogłoszeń czy duża ilość możliwości transportu produktu. Rozwiązania te będą punktem odniesienia do utworzenia własnej aplikacji webowej.
 = Analiza wymagań użytkownika
-Po analizie istniejących rozwiązań zdecydowano się, aby projektowana aplikacja pozwalała użytkownikom na sprzedaż różnych przedmiotów, bez szytwno określonego zakresu produktów. Sprzedaż skupiać się będzie na transakcjach lokalnych, gdzie kupujący ma możliwość bezpośredniej komunikacji ze sprzedającym w modelu zbliżonym do systemu w serwisie OLX.
+Po analizie istniejących rozwiązań zdecydowano się, aby projektowana aplikacja pozwalała użytkownikom na sprzedaż różnych przedmiotów, bez szytwno określonego zakresu produktów. Sprzedaż skupiać się będzie na transakcjach lokalnych, gdzie kupujący ma możliwość zakupu produktu z dostawą lub odbiorem osobistym, w modelu zbliżonym do systemu w serwisie OLX.
 
-Użytkownicy korzystający z systemu będą mieli możliwość rejestracji oraz zalogowania na konto użytkownika, które będzie wymagane w celu korzystania z pełnej funkcjonalności aplikacji. Następnie użytkownicy mogą wyszukiwać istniejacych ofert sprzedaży korzystając z wyszukiwarki oraz systemu filtrów, lub wystawić na sprzedaż własny produkt wykorzystując dostępny kreator. W przypadku chęci kupienia wybranego produktu, kupujący może kupić produkt bezpośrednio (jeśli jest to sprzedaż bezpośrednia) lub skontaktować się z kupującym w celu ustalenia warunków sprzedaży wykorzystując do tego czat tekstowy.
-
+Użytkownicy korzystający z systemu będą mieli możliwość rejestracji oraz zalogowania na konto użytkownika, które będzie wymagane w celu korzystania z pełnej funkcjonalności aplikacji. Następnie użytkownicy mogą wyszukiwać istniejacych ofert sprzedaży korzystając z wyszukiwarki oraz systemu filtrów, lub wystawić na sprzedaż własny produkt wykorzystując dostępny kreator. W przypadku chęci kupienia wybranego produktu, kupujący może kupić produkt wybierając dostawę kuriera, dostawę do paczkomatu lub odbiór osobisty pod wskazany przez sprzedającego adres.
 Zakłada się, że system będzie prosty oraz intuicyjny dla użytkowników systemu. Używanie aplikacji nie powinno sprawiać problemów użytkownikom, a interfejs powinien być prosty i przejrzysty, umożliwiając szybkie wykonywanie podstawowych operacji.
 = Wymagania funkcjonalne i niefunkcjonalne
 == Wymagania funkcjonalne
@@ -98,17 +97,16 @@ Zakłada się, że system będzie prosty oraz intuicyjny dla użytkowników syst
 + Wyszukiwanie ogłoszeń - Użytkownik powinien mieć możliwość wyszukania oferty za pomocy wyszukiwarki tekstowej
 + Filtrowanie ogłoszeń - Użytkownik powinien mieć możliwość filtrowania ogłoszeń według zadanych kryteriów (np. minimalna i maksymalna cena, kategoria, lokalizacja)
 + Wyświetlanie szczegółów ogłoszenia - Użytkownik powinien mieć możliwość wyświetlenia szczegółowych informacji o wybranej ofercie sprzedaży
-+ Komunikacja pomiędzy kupującym a sprzedającym - Kupujący powinien mieć możliwość skontaktowania się ze sprzedającym za pomocy czatu tekstowego
-+ Opcja zakupu bezpośredniego - Kupujący powinien mieć możliwość kupna produktu bezpośrednio, jeśli dana oferta posiada taką możliwość
++ Wybór metody dostawy - Użytkownik powinien mieć możliwość wyboru metody dostawy (kurier, paczkomat, odbiór osobisty) podczas procesu zakupu produktu
 == Wymagania niefunkcjonalne
 + Przejrzystość interfejsu - Interfejs użytkownika powinien być intuicyjny i prosty w obsłudze
 + Dostępność systemu - System powinien być dostępny dla użytkowników przez przeglądarkę internetową
 + Bezpieczeństwo danych - Dane użytkownika powinny być odpowiednio zabezpieczone, a dostęp do konta powinien wymagać uwierzytelnienia
 + Niezawodność systemu - Aplikacja powinna działać stabilnie i minimalizować możliwość występowania błędów
 = Założenia projektowe
-Projektowana aplikacja będzie platformą typu marketplace umożliwiającą użytkownikom na sprzedaż i kupno przedmiotów różnych kategorii. System koncentrować się będzie na transakcjach lokalnych, umożliwiając bezpośrednią komunikację miedzy dwiema stronami transakcji. Aplikacja będzie wzorować się na istniejących popularnych serwisach internetowych jak np. OLX. 
+Projektowana aplikacja będzie platformą typu marketplace umożliwiającą użytkownikom na sprzedaż i kupno przedmiotów różnych kategorii. System koncentrować się będzie na transakcjach lokalnych, umożliwiając różne metody dostawy produktu. Aplikacja będzie wzorować się na istniejących popularnych serwisach internetowych jak np. OLX. 
 
-Zakres funkcjonalności opisany został w *sekcji 4*, zawiera on między innymi rejestrację kont, wystawianie ogłoszeń czy wykorzystanie czatu tekstowego do komunikacji ze sprzedającym. 
+Zakres funkcjonalności opisany został w *sekcji 4*, zawiera on między innymi rejestrację kont, przeszukiwanie ogłoszeń czy zakup produktu. 
 
 Aplikacja zaprojektowana będzie w architekturze klient-serwer, gdzie frontend obsługiwać będzie interfejs użytkownika, zaś backend będzie odpowiedzialny za logikę aplikacji, przetwarzanie danych oraz komunikację z bazą danych. Wymiana danych między endami będzie się odbywać za pomocą API. 
 

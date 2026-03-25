@@ -1,0 +1,1 @@
+g++ main.cpp graph.cpp -o atsp.exe -std=c++17 -O2 -Wall -Wextra -Wpedantic -static -static-libgcc -static-libstdc++

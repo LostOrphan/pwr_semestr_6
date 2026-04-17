@@ -1,5 +1,4 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+#pragma once
 #include <string>
 constexpr int INF = 2147483647;
 
@@ -36,18 +35,8 @@ public:
     bool generateNextPermutation(int *arr, int size);
     void shuffleArray(int *arr, int size);
     int getN() const;
-
-    AlgorithmResult runBruteForce(const Graph &g, int startNode = 0);
-
     AlgorithmResult runNN(const Graph &g, int startNode = 0);
     void exploreNN(const Graph &g, int currentNode, int startNode, bool *visited,
                    int *currentPath, int step, int currentCost,
                    int &bestCost, int *bestPath); 
-
-    AlgorithmResult runRNN(const Graph &g);
-    void exploreRNNBranches(const Graph &g, int currentNode, bool *visited, int *currentPath, int step, int currentCost);
-
-    AlgorithmResult runRandomAlgorithm(const Graph &g, int K);
 };
-
-#endif

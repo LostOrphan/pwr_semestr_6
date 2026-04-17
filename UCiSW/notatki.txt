@@ -1,0 +1,21 @@
+CLK_WIZ:
+- clk_out1: 100MHz
+- clk_out2: 25MHz
+- clk_out3: 125MHz
+
+
+Gotowe moduły (Twoje):
+
+hdmi_tx (Nadajnik HDMI)
+
+oled_ascii (Sterownik wyświetlacza OLED)
+
+Moduły do samodzielnego napisania (Custom RTL):
+3.  adxl345_ctrl – sterownik I2C/SPI odczytujący pochylenie z akcelerometru.
+4.  button_debouncer – filtr drgań styków dla przycisku RESET.
+5.  video_timing – generator sygnałów VGA (liczniki H i V).
+6.  game_logic – "mózg" gry (obsługa kolizji, pozycji, wyniku).
+7.  image_generator – moduł decydujący o kolorze pikseli.
+8.  oled_score_manager – maszyna stanów sterująca wpisywaniem znaków na OLED.
+9.  lfsr_random – generator losowych pozycji dla celu (niebieskiego kwadratu).
+10. maze_rom – pamięć (np. wygenerowana przez IP Core Block Memory Generator lub jako zwykła tablica VHDL) przechowująca układ ścian.

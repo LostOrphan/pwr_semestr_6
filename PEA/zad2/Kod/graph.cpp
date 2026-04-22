@@ -241,8 +241,7 @@ AlgorithmResult Graph::runNN(const Graph &g, int startNode){
 // wyliczenie dolnego ograniczenia 
 int Graph::calculateBound(const Node& node, const Graph& g) {
     int bound = node.currentCost;
-    // Dla każdego miasta, w którym JESZCZE NIE BYLIŚMY,
-    // znajdujemy najtańszą wychodzącą krawędź i dodajemy do bound.
+    // obliczenie najkrotszej mozliwej drogi wykorzystujac nieodwiedzone miasta (ignorujac zasady ATSP, rozwiazanie optymistyczne)
     for (int i = 0; i < N; ++i) {
         if (!node.visited[i]) {
             int minEdge = INT_MAX;
@@ -263,7 +262,7 @@ int Graph::calculateBound(const Node& node, const Graph& g) {
 AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
     int N = g.getN();
     bool aborted = false;
-    // --- 1. Upper Bound z NN ---
+    // UB z NN
     AlgorithmResult nnResult = runNN(g, 0);
     int upperBound = nnResult.cost;
 
@@ -273,10 +272,10 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
     }
     delete[] nnResult.path;
 
-    // --- 2. Kolejka BFS ---
+    // kolejka FIFO
     std::queue<Node> q;
 
-    // --- 3. Root ---
+    // inicjalizacja korzenia
     Node root;
     root.level = 1;
     root.path = {0};
@@ -287,13 +286,13 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
 
     q.push(root);
 
-    // --- DEBUG (polecam zostawić na czas testów) ---
+    // debug print
     // std::cout << "Root LB: " << root.lowerBound << " UB: " << upperBound << std::endl;
 
-    // --- 4. Timer ---
+    // star timera
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    // --- 5. BFS ---
+    // glowna petla
     while (!q.empty()) {
 
         // timeout
@@ -306,20 +305,21 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
         Node current = q.front();
         q.pop();
 
-        // --- PRUNING ---
-        if (current.lowerBound > upperBound) {
+        // wycinanie
+        if (current.lowerBound >= upperBound) {
             continue;
         }
 
         int currentCity = current.path.back();
 
-        // --- LIŚĆ ---
+        // jesli aktualny node to lisc
         if (current.level == N) {
+            // koszt powrotu
             int returnCost = g.getEdge(currentCity, 0);
-
+    
             if (returnCost != -1) {
                 int totalCost = current.currentCost + returnCost;
-
+                //porownanie kosztu z UB, jesli mniejszy to nowe najlepsze dotychczasowe rozwiazanie
                 if (totalCost < upperBound) {
                     upperBound = totalCost;
                     bestFinalPath = current.path;
@@ -329,14 +329,14 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
             continue;
         }
 
-        // --- GENEROWANIE DZIECI ---
+        // jesli node to nie lisc, generowanie potomkow
         for (int nextCity = 0; nextCity < N; ++nextCity) {
 
             if (!current.visited[nextCity]) {
 
                 int edgeCost = g.getEdge(currentCity, nextCity);
                 if (edgeCost == -1) continue;
-
+                // generowanie potomka i przypisywanie mu danych
                 Node child = current;
 
                 child.path.push_back(nextCity);
@@ -346,7 +346,7 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
 
                 child.lowerBound = calculateBound(child, g);
 
-                // pruning dziecka
+                // wycinanie potomkow
                 if (child.lowerBound <= upperBound) {
                     q.push(child);
                 }
@@ -354,7 +354,7 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
         }
     }
 
-    // --- 6. wynik ---
+    // zapisanie wynikow
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
 
@@ -371,16 +371,17 @@ AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
 
     return {upperBound, duration, resultPath, pathSize, aborted};
 }
+// struktura pomocnicza w celu porownywania lowerBoundow
 struct CompareNode {
     bool operator()(const Node& a, const Node& b) {
-        return a.lowerBound > b.lowerBound; // min-heap
+        return a.lowerBound > b.lowerBound; // kolejnosc rosnaco
     }
 };
 
 AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
     int N = g.getN();
     bool aborted = false;
-    // --- 1. Upper Bound z NN ---
+    // UB z NN
     AlgorithmResult nnResult = runNN(g, 0);
     int upperBound = nnResult.cost;
 
@@ -390,10 +391,10 @@ AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
     }
     delete[] nnResult.path;
 
-    // --- 2. Kolejka priorytetowa ---
+    // kolejka priorytetowa z parametrami: Node-typ przechowywanego elementu, vector<node> sposob przechowywania node'ow, CompareNode - sposob porownywania wartosci
     std::priority_queue<Node, std::vector<Node>, CompareNode> pq;
 
-    // --- 3. Root ---
+    // tworzenie korzenia
     Node root;
     root.level = 1;
     root.path = {0};
@@ -404,13 +405,12 @@ AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
 
     pq.push(root);
 
-    // --- DEBUG ---
+    // debug print
     // std::cout << "Root LB: " << root.lowerBound << " UB: " << upperBound << std::endl;
 
-    // --- 4. Timer ---
+    // licznik
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    // --- 5. BestFS ---
     while (!pq.empty()) {
 
         // timeout
@@ -420,25 +420,24 @@ AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
             break;
         }
 
-        // --- NAJLEPSZY WĘZEŁ ---
+        // wezel z gory kolejki priorytetowej
         Node current = pq.top();
         pq.pop();
 
-        // 🔴 KLUCZOWA OPTYMALIZACJA:
-        // jeśli najlepszy dostępny LB ≥ UB → koniec (optymalne rozwiązanie znalezione)
+        // wycinanie
         if (current.lowerBound >= upperBound) {
             break;
         }
 
         int currentCity = current.path.back();
 
-        // --- LIŚĆ ---
+        // jesli aktualny node to lisc
         if (current.level == N) {
             int returnCost = g.getEdge(currentCity, 0);
-
+            // koszt powrotu
             if (returnCost != -1) {
                 int totalCost = current.currentCost + returnCost;
-
+                //porownanie kosztu z UB, jesli mniejszy to nowe najlepsze dotychczasowe rozwiazanie
                 if (totalCost < upperBound) {
                     upperBound = totalCost;
                     bestFinalPath = current.path;
@@ -448,14 +447,14 @@ AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
             continue;
         }
 
-        // --- GENEROWANIE DZIECI ---
+        // jesli node to nie lisc, generowanie potomkow
         for (int nextCity = 0; nextCity < N; ++nextCity) {
 
             if (!current.visited[nextCity]) {
 
                 int edgeCost = g.getEdge(currentCity, nextCity);
                 if (edgeCost == -1) continue;
-
+                // generowanie potomka i przypisywanie mu danych
                 Node child = current;
 
                 child.path.push_back(nextCity);
@@ -465,7 +464,7 @@ AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
 
                 child.lowerBound = calculateBound(child, g);
 
-                // pruning dziecka
+                // wycinanie potomkow
                 if (child.lowerBound <= upperBound) {
                     pq.push(child);
                 }
@@ -473,7 +472,7 @@ AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
         }
     }
 
-    // --- 6. wynik ---
+    // zapisanie wynikow
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
 

@@ -32,6 +32,7 @@ public:
                    int *currentPath, int step, int currentCost,
                    int &bestCost, int *bestPath); 
 
+                   
     int calculateBound(const Node& node,const Graph& g);
     AlgorithmResult runBnB_BFS(const Graph &g);
     AlgorithmResult runBnB_BestFS(const Graph& g);

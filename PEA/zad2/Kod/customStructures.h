@@ -4,12 +4,12 @@
 struct AlgorithmResult
 {
     int cost;
-    long long timeMicroseconds; //W zadaniu 2 przechowuje czas w milisekundach, nazwa nie zmieniona by nie ruszać elementów wykorzystywanych z zadania 1
+    long long timeMicroseconds; // w zadaniu 2 przechowuje czas w milisekundach, nazwa nie zmieniona by nie ruszać elementów wykorzystywanych z zadania 1
     int *path;
     int pathSize;
     bool aborted;
 };
-
+// struktura przechowująca wezel drzewa rozwiazan
 struct Node {
     std::vector<int> path;     // Zapisana ścieżka do tego momentu
     std::vector<bool> visited; // Pamięta, w których miastach już byliśmy

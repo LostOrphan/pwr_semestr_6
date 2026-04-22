@@ -1,15 +1,7 @@
 #pragma once
 #include <string>
+#include "customStructures.h"
 constexpr int INF = 2147483647;
-
-// Struktura przechowujaca wyniki dzialania algorytmow
-struct AlgorithmResult
-{
-    int cost;
-    long long timeMicroseconds;
-    int *path;
-    int pathSize;
-};
 
 class Graph
 {
@@ -39,4 +31,8 @@ public:
     void exploreNN(const Graph &g, int currentNode, int startNode, bool *visited,
                    int *currentPath, int step, int currentCost,
                    int &bestCost, int *bestPath); 
+
+    int calculateBound(const Node& node,const Graph& g);
+    AlgorithmResult runBnB_BFS(const Graph &g);
+    AlgorithmResult runBnB_BestFS(const Graph& g);
 };

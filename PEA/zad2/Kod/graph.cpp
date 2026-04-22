@@ -1,8 +1,12 @@
 #include "graph.h"
+#include "customStructures.h"
 #include <chrono>
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <queue>
+#include <vector>
+#include <climits> // dla INT_MAX
 
 Graph::Graph(int cities){
     N = cities;
@@ -223,10 +227,266 @@ AlgorithmResult Graph::runNN(const Graph &g, int startNode){
     exploreNN(g, startNode, startNode, visited, currentPath, 1, 0, bestCost, bestPath);
 
     auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     // Zwalnianie pamięci
     delete[] visited;
     delete[] currentPath;
     // Zwrot struktury wyników
-    return {bestCost, duration, bestPath, N + 1};
+    return {bestCost, duration, bestPath, N + 1, false};
+}
+
+// --------------------------------------------------------------------------------------
+//                                  kod zadania 2
+// --------------------------------------------------------------------------------------
+// wyliczenie dolnego ograniczenia 
+int Graph::calculateBound(const Node& node, const Graph& g) {
+    int bound = node.currentCost;
+    // Dla każdego miasta, w którym JESZCZE NIE BYLIŚMY,
+    // znajdujemy najtańszą wychodzącą krawędź i dodajemy do bound.
+    for (int i = 0; i < N; ++i) {
+        if (!node.visited[i]) {
+            int minEdge = INT_MAX;
+            for (int j = 0; j < N; ++j) {
+                if (i != j && g.getEdge(i, j) != -1 && g.getEdge(i, j) < minEdge) {
+                    minEdge = g.getEdge(i, j);
+                }
+            }
+            if (minEdge != INT_MAX) {
+                bound += minEdge;
+            }
+        }
+    }
+    return bound;
+}
+
+
+AlgorithmResult Graph::runBnB_BFS(const Graph &g) {
+    int N = g.getN();
+    bool aborted = false;
+    // --- 1. Upper Bound z NN ---
+    AlgorithmResult nnResult = runNN(g, 0);
+    int upperBound = nnResult.cost;
+
+    std::vector<int> bestFinalPath;
+    if (nnResult.path != nullptr && nnResult.pathSize > 0) {
+        bestFinalPath.assign(nnResult.path, nnResult.path + nnResult.pathSize);
+    }
+    delete[] nnResult.path;
+
+    // --- 2. Kolejka BFS ---
+    std::queue<Node> q;
+
+    // --- 3. Root ---
+    Node root;
+    root.level = 1;
+    root.path = {0};
+    root.visited.assign(N, false);
+    root.visited[0] = true;
+    root.currentCost = 0;
+    root.lowerBound = calculateBound(root, g);
+
+    q.push(root);
+
+    // --- DEBUG (polecam zostawić na czas testów) ---
+    // std::cout << "Root LB: " << root.lowerBound << " UB: " << upperBound << std::endl;
+
+    // --- 4. Timer ---
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    // --- 5. BFS ---
+    while (!q.empty()) {
+
+        // timeout
+        auto now = std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count() >= 300) {
+            aborted = true;
+            break;
+        }
+
+        Node current = q.front();
+        q.pop();
+
+        // --- PRUNING ---
+        if (current.lowerBound > upperBound) {
+            continue;
+        }
+
+        int currentCity = current.path.back();
+
+        // --- LIŚĆ ---
+        if (current.level == N) {
+            int returnCost = g.getEdge(currentCity, 0);
+
+            if (returnCost != -1) {
+                int totalCost = current.currentCost + returnCost;
+
+                if (totalCost < upperBound) {
+                    upperBound = totalCost;
+                    bestFinalPath = current.path;
+                    bestFinalPath.push_back(0);
+                }
+            }
+            continue;
+        }
+
+        // --- GENEROWANIE DZIECI ---
+        for (int nextCity = 0; nextCity < N; ++nextCity) {
+
+            if (!current.visited[nextCity]) {
+
+                int edgeCost = g.getEdge(currentCity, nextCity);
+                if (edgeCost == -1) continue;
+
+                Node child = current;
+
+                child.path.push_back(nextCity);
+                child.visited[nextCity] = true;
+                child.level++;
+                child.currentCost += edgeCost;
+
+                child.lowerBound = calculateBound(child, g);
+
+                // pruning dziecka
+                if (child.lowerBound <= upperBound) {
+                    q.push(child);
+                }
+            }
+        }
+    }
+
+    // --- 6. wynik ---
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    int *resultPath = nullptr;
+    int pathSize = 0;
+
+    if (!bestFinalPath.empty()) {
+        pathSize = bestFinalPath.size();
+        resultPath = new int[pathSize];
+        for (int i = 0; i < pathSize; ++i) {
+            resultPath[i] = bestFinalPath[i];
+        }
+    }
+
+    return {upperBound, duration, resultPath, pathSize, aborted};
+}
+struct CompareNode {
+    bool operator()(const Node& a, const Node& b) {
+        return a.lowerBound > b.lowerBound; // min-heap
+    }
+};
+
+AlgorithmResult Graph::runBnB_BestFS(const Graph& g) {
+    int N = g.getN();
+    bool aborted = false;
+    // --- 1. Upper Bound z NN ---
+    AlgorithmResult nnResult = runNN(g, 0);
+    int upperBound = nnResult.cost;
+
+    std::vector<int> bestFinalPath;
+    if (nnResult.path != nullptr && nnResult.pathSize > 0) {
+        bestFinalPath.assign(nnResult.path, nnResult.path + nnResult.pathSize);
+    }
+    delete[] nnResult.path;
+
+    // --- 2. Kolejka priorytetowa ---
+    std::priority_queue<Node, std::vector<Node>, CompareNode> pq;
+
+    // --- 3. Root ---
+    Node root;
+    root.level = 1;
+    root.path = {0};
+    root.visited.assign(N, false);
+    root.visited[0] = true;
+    root.currentCost = 0;
+    root.lowerBound = calculateBound(root, g);
+
+    pq.push(root);
+
+    // --- DEBUG ---
+    // std::cout << "Root LB: " << root.lowerBound << " UB: " << upperBound << std::endl;
+
+    // --- 4. Timer ---
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    // --- 5. BestFS ---
+    while (!pq.empty()) {
+
+        // timeout
+        auto now = std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - startTime).count() >= 300) {
+            aborted=true;
+            break;
+        }
+
+        // --- NAJLEPSZY WĘZEŁ ---
+        Node current = pq.top();
+        pq.pop();
+
+        // 🔴 KLUCZOWA OPTYMALIZACJA:
+        // jeśli najlepszy dostępny LB ≥ UB → koniec (optymalne rozwiązanie znalezione)
+        if (current.lowerBound >= upperBound) {
+            break;
+        }
+
+        int currentCity = current.path.back();
+
+        // --- LIŚĆ ---
+        if (current.level == N) {
+            int returnCost = g.getEdge(currentCity, 0);
+
+            if (returnCost != -1) {
+                int totalCost = current.currentCost + returnCost;
+
+                if (totalCost < upperBound) {
+                    upperBound = totalCost;
+                    bestFinalPath = current.path;
+                    bestFinalPath.push_back(0);
+                }
+            }
+            continue;
+        }
+
+        // --- GENEROWANIE DZIECI ---
+        for (int nextCity = 0; nextCity < N; ++nextCity) {
+
+            if (!current.visited[nextCity]) {
+
+                int edgeCost = g.getEdge(currentCity, nextCity);
+                if (edgeCost == -1) continue;
+
+                Node child = current;
+
+                child.path.push_back(nextCity);
+                child.visited[nextCity] = true;
+                child.level++;
+                child.currentCost += edgeCost;
+
+                child.lowerBound = calculateBound(child, g);
+
+                // pruning dziecka
+                if (child.lowerBound <= upperBound) {
+                    pq.push(child);
+                }
+            }
+        }
+    }
+
+    // --- 6. wynik ---
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    int *resultPath = nullptr;
+    int pathSize = 0;
+
+    if (!bestFinalPath.empty()) {
+        pathSize = bestFinalPath.size();
+        resultPath = new int[pathSize];
+        for (int i = 0; i < pathSize; ++i) {
+            resultPath[i] = bestFinalPath[i];
+        }
+    }
+
+    return {upperBound, duration, resultPath, pathSize, aborted};
 }

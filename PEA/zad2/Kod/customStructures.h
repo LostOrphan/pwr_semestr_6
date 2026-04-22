@@ -11,10 +11,10 @@ struct AlgorithmResult
 };
 // struktura przechowująca wezel drzewa rozwiazan
 struct Node {
-    std::vector<int> path;     // Zapisana ścieżka do tego momentu
-    std::vector<bool> visited; // Pamięta, w których miastach już byliśmy
-    int level;                 // Głębokość w drzewie (liczba odwiedzonych miast)
-    int currentCost;           // Rzeczywisty koszt dotychczasowej trasy
-    int lowerBound;            // d
+    std::vector<int> path;     // sciezka do aktualnego momentu
+    std::vector<bool> visited; // lista odwiedzonych miast
+    int level;                 // poziom drzewa
+    int currentCost;           // rzeczywisty koszt ciezki
+    int lowerBound;            // wyliczony aktualny LB
 };
 

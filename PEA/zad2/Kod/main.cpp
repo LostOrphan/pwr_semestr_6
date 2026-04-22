@@ -12,7 +12,7 @@ int main(){
     AlgorithmResult resultBestFS;
     // Menu
     while (choice != 0){
-        std::cout << "\n=== ATSP zadanie 1 ===\n";
+        std::cout << "\n=== ATSP zadanie 2 ===\n";
         std::cout << "1. Wczytanie danych z pliku\n";
         std::cout << "2. Wygenerowanie danych losowych\n";
         std::cout << "3. Wyswietlenie aktualnych danych\n";
